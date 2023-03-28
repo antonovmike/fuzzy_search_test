@@ -8,9 +8,19 @@ fn main() {
     let reader = BufReader::new(file);
 
     let s = utf16_reader::read_to_string(reader);
+    let mut lines: Vec<String> = vec![];
+
+    for (index, line) in s.lines().enumerate() {
+        if index > 60 && index < 64 {
+            let sliced = line;
+            lines.push(sliced.to_string())
+        }
+    }
+
+    let mut products: Vec<String> = vec![];
 
     loop {
-        print!("ТЕкст для поиска: ");
+        print!("Текст для поиска: ");
         io::stdout().flush().unwrap();
 
         let mut input = String::new();
@@ -18,22 +28,11 @@ fn main() {
 
         input = input.trim().to_string().to_uppercase(); // remove leading/trailing whitespaces
 
-        if input == "выход" {
+        if input == "ВЫХОД" {
             break;
         }
 
-        let mut lines: Vec<String> = vec![];
-
-        for (index, line) in s.lines().enumerate() {
-            if index > 60 && index < 64 {
-                let sliced = line;
-                lines.push(sliced.to_string())
-            }
-        }
-
-        let mut products: Vec<String> = vec![];
-
-        for i in lines {
+        for i in lines.clone() {
             let shorter_string = &i[398..];
             let parts = shorter_string.split("N");
             let mut index = 0;
