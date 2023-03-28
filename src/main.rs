@@ -20,6 +20,9 @@ fn main() {
 
     let mut products: Vec<String> = vec![];
 
+    let mut engine: SimSearch<u32> = SimSearch::new();
+    let mut search_id = 0;
+
     for i in lines.clone() {
         let shorter_string = &i[398..];
         let parts = shorter_string.split("N");
@@ -33,7 +36,8 @@ fn main() {
                 let raw_str = chars.as_str();
                 // remove last 2 chars
                 let pure_str = raw_str.split_at(raw_str.len() - 2);
-                products.push(pure_str.0.to_string())
+                products.push(pure_str.0.to_string());
+                engine.insert(search_id, pure_str.0)
             }
             index += 1
         }
@@ -48,12 +52,19 @@ fn main() {
 
         input = input.trim().to_string().to_uppercase(); // remove leading/trailing whitespaces
 
+        let results: Vec<u32> = engine.search(&input);
+
         if input == "ВЫХОД" {
             break;
         }
 
         if products.contains(&input) {
             println!("SUCCESS!")
+        }
+        if results.len() > 0 {
+            println!("{:?}", results)
+        } else {
+            println!("ERROR")
         }
     }
 }
