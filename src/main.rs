@@ -29,7 +29,6 @@ fn main() {
         let parts = shorter_string.split("N");
         let mut index = 0;
         for part in parts {
-            // if index == 1 || index == 2 {
             // Remove 1st n 2nd chars
             let mut chars = part.chars();
             chars.next();
@@ -50,7 +49,6 @@ fn main() {
                 catalog.push((search_id, pure_str.0.to_string()));
             }
 
-            // }
             index += 1;
             search_id += 1
         }
@@ -71,19 +69,21 @@ fn main() {
             break;
         }
 
-        if products.contains(&input) {
-            println!("Найдено")
-        } else {
-            println!("Не найдено")
-        }
-
-        println!("{:?}", results);
-        for r in results {
-            for c in catalog.clone() {
-                if r == c.0 {
-                    println!("{}", c.1)
-                }
+        #[allow(unused_assignments)]
+        for i in results.clone() {
+            let vec_index = catalog.iter().position(|r| r.0 == i).unwrap();
+            let mut final_string = "".to_string();
+            if vec_index % 2 == 1 {
+                final_string = format!("{}, {}", catalog[vec_index - 1].1, catalog[vec_index].1)
+            } else {
+                final_string = format!("{}, {}", catalog[vec_index].1, catalog[vec_index + 1].1)
             }
+            println!("Найдено: {}", final_string);
         }
+        // if products.contains(&input) {
+        //     println!("Найдено")
+        // } else {
+        //     println!("Не найдено")
+        // }
     }
 }
