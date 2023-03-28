@@ -23,7 +23,12 @@ fn main() {
         let mut index = 0;
         for part in parts {
             if index == 1 || index == 2 {
-                println!("{}\t{}", index, part)
+                let mut chars = part.chars();
+                chars.next();
+                chars.next_back();
+                let raw_str = chars.as_str();
+                let pure_str = raw_str.split_at(raw_str.len() - 2);
+                println!("{}\t{}", index, pure_str.0)
             }
             index += 1
         }
