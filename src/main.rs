@@ -45,7 +45,6 @@ fn main() {
                     let raw_str = chars.as_str();
                     // remove last 2 chars
                     let pure_str = raw_str.split_at(raw_str.len() - 2);
-                    // println!("{}\t{}", index, pure_str.0)
                     products.push(pure_str.0.to_string())
                 }
                 index += 1
