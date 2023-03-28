@@ -36,11 +36,14 @@ fn main() {
                 let raw_str = chars.as_str();
                 // remove last 2 chars
                 let pure_str = raw_str.split_at(raw_str.len() - 2);
+                println!("{}\t{:?}", search_id, pure_str);
                 products.push(pure_str.0.to_string());
-                engine.insert(search_id, pure_str.0)
+                engine.insert(search_id, pure_str.0);
             }
-            index += 1
+            index += 1;
+            search_id += 1
         }
+        search_id += 1
     }
 
     loop {
@@ -59,12 +62,11 @@ fn main() {
         }
 
         if products.contains(&input) {
-            println!("SUCCESS!")
-        }
-        if results.len() > 0 {
-            println!("{:?}", results)
+            println!("Найдено")
         } else {
-            println!("ERROR")
+            println!("Не найдено")
         }
+
+        println!("{:?}", results)
     }
 }
