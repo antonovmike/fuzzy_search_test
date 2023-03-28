@@ -1,6 +1,7 @@
 # posfz
 
 Слова для демо версии поика:
+
 ЭЛЬКАР Р-Р 30% 25МЛ
 
 ПИК-ФАРМА ПРО, РОССИЯ
@@ -12,3 +13,12 @@
 АЛФАГИН КАПС №20
 
 ХЕРБИОН, ПАКИСТАН
+
+
+механизмы нечеткого поиска / fuzzy search
+
+https://lib.rs/crates/simsearch
+
+https://crates.io/crates/strsim
+
+commandline interface https://lib.rs/crates/rustyline
