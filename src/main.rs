@@ -21,7 +21,7 @@ fn main() {
         let parts = shorter_string.split("N");
         let mut index = 0;
         for part in parts {
-            if index == 0 || index == 2 {
+            if index == 0 || index == 1 || index == 2 {
                 println!("{}\n{}", index, part)
             }
             index += 1
