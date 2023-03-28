@@ -22,28 +22,38 @@ fn main() {
 
     let mut engine: SimSearch<u32> = SimSearch::new();
     let mut search_id = 0;
+    let mut catalog: Vec<(u32, String)> = vec![];
 
     for i in lines.clone() {
         let shorter_string = &i[398..];
         let parts = shorter_string.split("N");
         let mut index = 0;
         for part in parts {
-            if index == 1 || index == 2 {
-                // Remove 1st n 2nd chars
-                let mut chars = part.chars();
-                chars.next();
-                chars.next_back();
-                let raw_str = chars.as_str();
-                // remove last 2 chars
-                let pure_str = raw_str.split_at(raw_str.len() - 2);
-                println!("{}\t{:?}", search_id, pure_str);
+            // if index == 1 || index == 2 {
+            // Remove 1st n 2nd chars
+            let mut chars = part.chars();
+            chars.next();
+            chars.next_back();
+            let raw_str = chars.as_str();
+            // remove last 2 chars
+            let pure_str = raw_str.split_at(raw_str.len() - 2);
+            if index == 1 {
+                println!("{}\t{}", search_id, pure_str.0);
                 products.push(pure_str.0.to_string());
                 engine.insert(search_id, pure_str.0);
+                catalog.push((search_id, pure_str.0.to_string()));
             }
+            if index == 2 {
+                println!("{}\t{}", search_id, pure_str.0);
+                products.push(pure_str.0.to_string());
+                engine.insert(search_id, pure_str.0);
+                catalog.push((search_id, pure_str.0.to_string()));
+            }
+
+            // }
             index += 1;
             search_id += 1
         }
-        search_id += 1
     }
 
     loop {
@@ -67,6 +77,13 @@ fn main() {
             println!("Не найдено")
         }
 
-        println!("{:?}", results)
+        println!("{:?}", results);
+        for r in results {
+            for c in catalog.clone() {
+                if r == c.0 {
+                    println!("{}", c.1)
+                }
+            }
+        }
     }
 }
