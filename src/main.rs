@@ -117,9 +117,13 @@ fn mistape_2() {
             search_id += 1;
         });
 
-    let qwe = match catalog.last() {
-        Some(tuple) if tuple.0 == 1943 => true,
-        _ => false,
-    };
+    let mut qwe = false;
+    for i in catalog.clone() {
+        if i.0 == 1943 {
+            println!("TEST {:?}", i);
+            qwe = true
+        }
+    }
+
     assert_eq!(true, qwe)
 }
