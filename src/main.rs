@@ -28,7 +28,6 @@ fn main() {
 
             search_id += 1;
         });
-    // .take(500);
 
     loop {
         print!("Текст для поиска: ");
@@ -38,6 +37,7 @@ fn main() {
         io::stdin().read_line(&mut input).unwrap();
 
         input = input.trim().to_string();
+        // input = trimmer(input);
 
         let results: Vec<u32> = engine.search(&input);
 
@@ -46,13 +46,29 @@ fn main() {
             println!("Нет совпадений");
             continue;
         }
-
+        // if total > 10 {
+        //     results.drain(10..);
+        // }
         for index in results {
             println!("{}, {:?}", index, catalog[index as usize])
         }
         println!("всего: {}", total);
     }
 }
+
+// fn trimmer(input: String) -> String {
+//     input.trim().to_string()
+// }
+
+// #[cfg(test)]
+// mod tests {
+//     use super::*;
+
+//     #[test]
+//     fn test_trim() {
+//         assert_eq!("верблжй", trimmer("верблжй ".to_string()));
+//     }
+// }
 
 #[test]
 fn mistape() {
