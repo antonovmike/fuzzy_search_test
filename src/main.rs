@@ -37,7 +37,6 @@ fn main() {
         io::stdin().read_line(&mut input).unwrap();
 
         input = input.trim().to_string();
-        // input = trimmer(input);
 
         let results: Vec<u32> = engine.search(&input);
 
@@ -55,10 +54,6 @@ fn main() {
         println!("всего: {}", total);
     }
 }
-
-// fn trimmer(input: String) -> String {
-//     input.trim().to_string()
-// }
 
 // #[cfg(test)]
 // mod tests {
@@ -97,5 +92,13 @@ fn mistape() {
     let input = "верблжй";
     let results: Vec<u32> = engine.search(&input);
     let total = results.len();
-    assert_eq!(13, total)
+    assert_eq!(13, total);
+
+    let qwe = match catalog.last() {
+        Some(t) if t.1 == "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48" => {
+            true
+        }
+        _ => false,
+    };
+    assert_eq!(true, qwe)
 }
