@@ -12,7 +12,7 @@ fn main() {
     let mut lines: Vec<String> = vec![];
 
     for (index, line) in s.lines().enumerate() {
-        if index > 60 && index < 190 {
+        if index > 60 && index < 500 {
             let sliced = line;
             lines.push(sliced.to_string())
         }
@@ -79,12 +79,15 @@ fn main() {
 
         let results: Vec<u32> = engine.search(&input);
 
+        if results.len() == 0 {
+            println!("Нет совпадений")
+        }
         if input == "ВЫХОД" {
             break;
         }
 
         #[allow(unused_assignments)]
-        for i in results.clone() {
+        for i in results {
             let vec_index = catalog.iter().position(|r| r.0 == i).unwrap();
             let mut final_string = "".to_string();
             if vec_index % 2 == 1 {
