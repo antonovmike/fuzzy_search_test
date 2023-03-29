@@ -1,0 +1,1 @@
+/home/mike/projects/POS/utf8_dbo.GOOD.Table.sql
