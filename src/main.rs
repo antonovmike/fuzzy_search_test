@@ -69,7 +69,7 @@ mod tests {
     //     assert_eq!("верблжй", trimmer("верблжй ".to_string()));
     // }
     #[test]
-    fn mistape_1() {
+    fn total_mistape() {
         let (_catalog, engine) = load();
 
         let input = "верблжй";
@@ -79,7 +79,17 @@ mod tests {
     }
 
     #[test]
-    fn mistape_2() {
+    fn total_full_prase() {
+        let (_catalog, engine) = load();
+
+        let input = "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48";
+        let results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        assert_eq!(464, total)
+    }
+
+    #[test]
+    fn top_10_mistape() {
         let (catalog, engine) = load();
 
         let input = "верблжй";
@@ -90,17 +100,20 @@ mod tests {
         if total > 10 {
             results.drain(10..);
         }
+        let mut top_ten: Vec<(u32, String)> = vec![];
         for index in results {
-            println!("{}, {:?}", index, catalog[index as usize].1)
+            top_ten.push((index, catalog[index as usize].1.clone()))
         }
 
-        let mut ifcontains = false;
-        for (i, _) in catalog.iter() {
-            if *i == 1943 {
-                ifcontains = true
-            }
+        let mut answervec: Vec<u32> = vec![];
+        for (i, _) in top_ten.iter() {
+            answervec.push(*i)
         }
 
-        assert_eq!(true, ifcontains)
+        let key: Vec<u32> = vec![
+            1943, 4347, 4348, 4363, 4364, 10482, 10483, 10484, 10485, 11237,
+        ];
+
+        assert_eq!(key, answervec)
     }
 }
