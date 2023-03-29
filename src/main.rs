@@ -1,17 +1,19 @@
 use simsearch::SimSearch;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
 use std::io::{self, Write};
+use std::io::{BufRead, BufReader};
 
 fn main() {
     let text_file = "utf8_dbo.GOOD.Table.sql";
     let file = File::open(text_file).unwrap();
 
-    let it = BufReader::new(file).lines()
-      .into_iter()
-      .map(|l| l.unwrap())
-      .filter(|l| l.starts_with("INSERT"));
-      // .take(500);
+    let it = BufReader::new(file)
+        .lines()
+        .into_iter()
+        .map(|l| l.unwrap())
+        .filter(|l| l.starts_with("INSERT"))
+        .map(|l| l[398..].to_owned());
+    // .take(500);
 
     let mut engine: SimSearch<u32> = SimSearch::new();
     let mut search_id = 0;
@@ -19,14 +21,11 @@ fn main() {
     let mut catalog: Vec<(u32, String)> = vec![];
 
     for i in it {
-        let data = &i[398..];
-        // println!("{:?}", shorter_string);
-
-        let parts = data.split("N'");
+        let parts = i.split("N'");
         for (i, part) in parts.enumerate() {
             if i == 1 {
                 // remove last 3 chars
-                let name = part[0..part.len()-3].to_string();
+                let name = part[0..part.len() - 3].to_string();
                 println!("{}\t{}", search_id, name);
 
                 engine.insert(search_id, &name);
