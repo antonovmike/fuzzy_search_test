@@ -85,14 +85,22 @@ mod tests {
         let input = "верблжй";
         engine.search(&input);
 
-        let mut qwe = false;
-        for i in catalog.clone() {
-            if i.0 == 1943 {
-                println!("TEST {:?}", i);
-                qwe = true
+        let mut results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        if total > 10 {
+            results.drain(10..);
+        }
+        for index in results {
+            println!("{}, {:?}", index, catalog[index as usize].1)
+        }
+
+        let mut ifcontains = false;
+        for (i, _) in catalog.iter() {
+            if *i == 1943 {
+                ifcontains = true
             }
         }
 
-        assert_eq!(true, qwe)
+        assert_eq!(true, ifcontains)
     }
 }
