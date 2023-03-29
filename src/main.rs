@@ -64,10 +64,6 @@ fn load() -> (Vec<(u32, String)>, SimSearch<u32>) {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn test_trim() {
-    //     assert_eq!("верблжй", trimmer("верблжй ".to_string()));
-    // }
     #[test]
     fn total_mistape() {
         let (_catalog, engine) = load();
