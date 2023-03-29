@@ -117,6 +117,9 @@ fn mistape_2() {
             search_id += 1;
         });
 
+    let input = "верблжй";
+    engine.search(&input);
+
     let mut qwe = false;
     for i in catalog.clone() {
         if i.0 == 1943 {
