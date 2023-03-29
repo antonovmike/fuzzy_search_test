@@ -1,9 +1,5 @@
 # posfz
 
-При большом объёме обрабатываемых записей паникует на "АЗИТРОМИЦИН-":
-
-thread 'main' panicked at 'byte index 21 is not a char boundary; it is inside 'Н' (bytes 20..22) of `АЗИТРОМИЦИН-`', /rustc/2c8cc343237b8f7d5a3c3703e3a87f2eb2c54a74/library/core/src/str/mod.rs:678:13
-
 
 Слова для демо версии поика:
 
@@ -27,3 +23,12 @@ https://lib.rs/crates/simsearch
 https://crates.io/crates/strsim
 
 commandline interface https://lib.rs/crates/rustyline
+
+По умолчанию точность поика simsearch 0,8. Запрос ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48 выдаст 884 совпадений
+```Rust
+let mut engine: SimSearch<u32> = SimSearch::new(); = 884
+```
+Опция с ограничением 0.9 выдаст 464
+```Rust
+let mut engine: SimSearch<u32> = SimSearch::new_with(SearchOptions::new().threshold(0.9)); = 464
+```

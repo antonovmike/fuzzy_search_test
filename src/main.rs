@@ -1,4 +1,4 @@
-use simsearch::SimSearch;
+use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
@@ -8,6 +8,7 @@ fn main() {
     let file = File::open(text_file).unwrap();
 
     let mut engine: SimSearch<u32> = SimSearch::new();
+    // let mut engine: SimSearch<u32> = SimSearch::new_with(SearchOptions::new().threshold(0.9));
     let mut search_id = 0;
 
     let mut catalog: Vec<(u32, String)> = vec![];
@@ -36,7 +37,6 @@ fn main() {
         let mut input = String::new();
         io::stdin().read_line(&mut input).unwrap();
 
-        // remove leading/trailing whitespaces
         input = input.trim().to_string();
 
         let results: Vec<u32> = engine.search(&input);

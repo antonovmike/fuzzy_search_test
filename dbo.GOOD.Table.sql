@@ -1,1 +1,0 @@
-/home/mike/projects/POS/dbo.GOOD.Table.sql
