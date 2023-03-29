@@ -41,16 +41,19 @@ fn main() {
                 products.push(pure_str.0.to_string());
                 engine.insert(search_id, pure_str.0);
                 catalog.push((search_id, pure_str.0.to_string()));
+                search_id += 1;
             }
             if index == 2 {
                 println!("{}\t{}", search_id, pure_str.0);
                 products.push(pure_str.0.to_string());
                 engine.insert(search_id, pure_str.0);
                 catalog.push((search_id, pure_str.0.to_string()));
+                search_id += 1;
             }
-
+            if index > 2 {
+                continue;
+            }
             index += 1;
-            search_id += 1
         }
     }
 
