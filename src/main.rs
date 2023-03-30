@@ -2,6 +2,7 @@ use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
+use strsim::jaro_winkler;
 
 struct SimSearchEngine {
     engine: SimSearch<usize>,
@@ -15,9 +16,15 @@ impl SimSearchEngine {
     }
 }
 
-trait Search {
-    fn load(&mut self, catalog: Vec<(usize, String)>);
-    fn search(&self, input: &str) -> Vec<usize>;
+impl Search for SimSearchEngine {
+    fn load(&mut self, catalog: Vec<(usize, String)>) {
+        catalog
+            .iter()
+            .for_each(|(i, data)| self.engine.insert(*i, data))
+    }
+    fn search(&self, input: &str) -> Vec<usize> {
+        self.engine.search(input)
+    }
 }
 
 struct StrSearchEngine {
@@ -37,19 +44,14 @@ impl Search for StrSearchEngine {
         unimplemented!()
     }
     fn search(&self, input: &str) -> Vec<usize> {
+        let qwe: f64 = jaro_winkler(input, "catalog");
         unimplemented!()
     }
 }
 
-impl Search for SimSearchEngine {
-    fn load(&mut self, catalog: Vec<(usize, String)>) {
-        catalog
-            .iter()
-            .for_each(|(i, data)| self.engine.insert(*i, data))
-    }
-    fn search(&self, input: &str) -> Vec<usize> {
-        self.engine.search(input)
-    }
+trait Search {
+    fn load(&mut self, catalog: Vec<(usize, String)>);
+    fn search(&self, input: &str) -> Vec<usize>;
 }
 
 fn main() {

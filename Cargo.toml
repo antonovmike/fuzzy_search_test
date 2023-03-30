@@ -8,4 +8,5 @@ authors = ["Mike AntonovMA@outlook.com"]
 
 [dependencies]
 simsearch = "0.2.4"
+strsim = "0.10.0"
 utf16_reader = "0.1.0"
