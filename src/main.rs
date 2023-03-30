@@ -36,7 +36,6 @@ fn main() {
 
     let mut engine = SimSearchEngine::new();
     engine.load(catalog.clone());
-    // SimSearchEngine::load(catalog);
 
     loop {
         print!("Текст для поиска: ");
@@ -81,74 +80,84 @@ fn load() -> Vec<(u32, String)> {
             name[0..name.len() - 3].to_owned()
         })
         .for_each(|name| {
-            // engine.insert(search_id, &name);
             catalog.push((search_id, name.to_string()));
-
             search_id += 1;
         });
 
     catalog
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-//     #[test]
-//     fn total_mistape_1() {
-//         let (_catalog, engine) = load();
+    #[test]
+    fn total_mistape_1() {
+        let catalog = load();
+        let mut engine = SimSearchEngine::new();
+        engine.load(catalog.clone());
 
-//         let input = "верблжй";
-//         let results: Vec<u32> = engine.search(&input);
-//         let total = results.len();
-//         assert_eq!(13, total)
-//     }
+        let input = "верблжй";
+        let results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        assert_eq!(13, total)
+    }
 
-//     #[test]
-//     fn total_mistape_2() {
-//         let (_catalog, engine) = load();
+    #[test]
+    fn total_mistape_2() {
+        let catalog = load();
+        let mut engine = SimSearchEngine::new();
+        engine.load(catalog.clone());
 
-//         let input = "эластичн";
-//         let results: Vec<u32> = engine.search(&input);
-//         let total = results.len();
-//         assert_eq!(222, total)
-//     }
+        let input = "эластичн";
+        let results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        assert_eq!(222, total)
+    }
 
-//     #[test]
-//     fn total_full_prase() {
-//         let (_catalog, engine) = load();
+    #[test]
+    fn total_full_prase() {
+        let catalog = load();
+        let mut engine = SimSearchEngine::new();
+        engine.load(catalog.clone());
 
-//         let input = "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48";
-//         let results: Vec<u32> = engine.search(&input);
-//         let total = results.len();
-//         assert_eq!(464, total)
-//     }
+        let input = "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48";
+        let results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        assert_eq!(464, total)
+    }
 
-//     #[test]
-//     fn top_10_mistape_1() {
-//         let input = "верблжй";
-//         let (_catalog, engine) = load();
-//         engine.search(&input);
+    #[test]
+    fn top_10_mistape_1() {
+        let input = "верблжй";
+        let catalog = load();
+        let mut engine = SimSearchEngine::new();
+        engine.load(catalog.clone());
 
-//         let answervec: Vec<u32> = engine.search(&input).into_iter().take(10).collect();
+        engine.search(&input);
 
-//         let key: Vec<u32> = vec![
-//             1943, 4347, 4348, 4363, 4364, 10482, 10483, 10484, 10485, 11237,
-//         ];
+        let answervec: Vec<u32> = engine.search(&input).into_iter().take(10).collect();
 
-//         assert_eq!(key, answervec)
-//     }
+        let key: Vec<u32> = vec![
+            1943, 4347, 4348, 4363, 4364, 10482, 10483, 10484, 10485, 11237,
+        ];
 
-//     #[test]
-//     fn top_10_mistape_2() {
-//         let input = "эластичн";
-//         let (_catalog, engine) = load();
-//         engine.search(&input);
+        assert_eq!(key, answervec)
+    }
 
-//         let answervec: Vec<u32> = engine.search(&input).into_iter().take(10).collect();
+    #[test]
+    fn top_10_mistape_2() {
+        let input = "эластичн";
+        let catalog = load();
+        let mut engine = SimSearchEngine::new();
+        engine.load(catalog.clone());
 
-//         let key: Vec<u32> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
+        engine.search(&input);
 
-//         assert_eq!(key, answervec)
-//     }
-// }
+        let answervec: Vec<u32> = engine.search(&input).into_iter().take(10).collect();
+
+        let key: Vec<u32> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
+
+        assert_eq!(key, answervec)
+    }
+}
