@@ -95,7 +95,7 @@ mod tests {
     }
 
     #[test]
-    fn top_10_mistape() {
+    fn top_10_mistape_1() {
         let (catalog, engine) = load();
 
         let input = "верблжй";
@@ -135,16 +135,18 @@ mod tests {
         if total > 10 {
             results.drain(10..);
         }
-        let mut top_ten: Vec<(u32, String)> = vec![];
-        for index in results {
-            top_ten.push((index, catalog[index as usize].1.clone()))
-        }
+        // ----
+        let top_ten: Vec<(u32, String)> = results
+            .into_iter()
+            .take(10)
+            .map(|index| (index, catalog[index as usize].1.clone()))
+            .collect();
 
         let mut answervec: Vec<u32> = vec![];
         for (i, _) in top_ten.iter() {
             answervec.push(*i)
         }
-
+        // ---
         let key: Vec<u32> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
 
         assert_eq!(key, answervec)
