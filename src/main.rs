@@ -33,6 +33,7 @@ impl Search for SimSearchEngine {
 
 fn main() {
     let catalog = load();
+
     let mut engine = SimSearchEngine::new();
     engine.load(catalog.clone());
     // SimSearchEngine::load(catalog);
