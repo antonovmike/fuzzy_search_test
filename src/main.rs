@@ -4,7 +4,7 @@ use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 
 struct SimSearchEngine {
-    engine: SimSearch<u32>,
+    engine: SimSearch<usize>,
 }
 
 impl SimSearchEngine {
@@ -16,17 +16,17 @@ impl SimSearchEngine {
 }
 
 trait Search {
-    fn load(&mut self, catalog: Vec<(u32, String)>);
-    fn search(&self, input: &str) -> Vec<u32>;
+    fn load(&mut self, catalog: Vec<(usize, String)>);
+    fn search(&self, input: &str) -> Vec<usize>;
 }
 
 impl Search for SimSearchEngine {
-    fn load(&mut self, catalog: Vec<(u32, String)>) {
+    fn load(&mut self, catalog: Vec<(usize, String)>) {
         catalog
             .iter()
             .for_each(|(i, data)| self.engine.insert(*i, data))
     }
-    fn search(&self, input: &str) -> Vec<u32> {
+    fn search(&self, input: &str) -> Vec<usize> {
         self.engine.search(input)
     }
 }
@@ -46,7 +46,7 @@ fn main() {
 
         input = input.trim().to_string();
 
-        let results: Vec<u32> = engine.search(&input);
+        let results: Vec<usize> = engine.search(&input);
 
         let total = results.len();
         if total == 0 {
@@ -62,13 +62,13 @@ fn main() {
     }
 }
 
-fn load() -> Vec<(u32, String)> {
+fn load() -> Vec<(usize, String)> {
     let text_file = "utf8_dbo.GOOD.Table.sql";
     let file = File::open(text_file).unwrap();
 
     let mut search_id = 0;
 
-    let mut catalog: Vec<(u32, String)> = vec![];
+    let mut catalog: Vec<(usize, String)> = vec![];
 
     BufReader::new(file)
         .lines()
@@ -98,7 +98,7 @@ mod tests {
         engine.load(catalog.clone());
 
         let input = "верблжй";
-        let results: Vec<u32> = engine.search(&input);
+        let results: Vec<usize> = engine.search(&input);
         let total = results.len();
         assert_eq!(13, total)
     }
@@ -110,7 +110,7 @@ mod tests {
         engine.load(catalog.clone());
 
         let input = "эластичн";
-        let results: Vec<u32> = engine.search(&input);
+        let results: Vec<usize> = engine.search(&input);
         let total = results.len();
         assert_eq!(222, total)
     }
@@ -122,7 +122,7 @@ mod tests {
         engine.load(catalog.clone());
 
         let input = "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48";
-        let results: Vec<u32> = engine.search(&input);
+        let results: Vec<usize> = engine.search(&input);
         let total = results.len();
         assert_eq!(464, total)
     }
@@ -132,13 +132,13 @@ mod tests {
         let input = "верблжй";
         let catalog = load();
         let mut engine = SimSearchEngine::new();
-        engine.load(catalog.clone());
 
+        engine.load(catalog.clone());
         engine.search(&input);
 
-        let answervec: Vec<u32> = engine.search(&input).into_iter().take(10).collect();
+        let answervec: Vec<usize> = engine.search(&input).into_iter().take(10).collect();
 
-        let key: Vec<u32> = vec![
+        let key: Vec<usize> = vec![
             1943, 4347, 4348, 4363, 4364, 10482, 10483, 10484, 10485, 11237,
         ];
 
@@ -150,13 +150,13 @@ mod tests {
         let input = "эластичн";
         let catalog = load();
         let mut engine = SimSearchEngine::new();
-        engine.load(catalog.clone());
 
+        engine.load(catalog.clone());
         engine.search(&input);
 
-        let answervec: Vec<u32> = engine.search(&input).into_iter().take(10).collect();
+        let answervec: Vec<usize> = engine.search(&input).into_iter().take(10).collect();
 
-        let key: Vec<u32> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
+        let key: Vec<usize> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
 
         assert_eq!(key, answervec)
     }
