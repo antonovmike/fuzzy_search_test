@@ -46,7 +46,7 @@ fn main() {
 
         input = input.trim().to_string();
 
-        let results: Vec<usize> = engine.search(&input);
+        let results = engine.search(&input);
 
         let total = results.len();
         if total == 0 {
@@ -68,7 +68,7 @@ fn load() -> Vec<(usize, String)> {
 
     let mut search_id = 0;
 
-    let mut catalog: Vec<(usize, String)> = vec![];
+    let mut catalog = vec![];
 
     BufReader::new(file)
         .lines()
@@ -98,7 +98,7 @@ mod tests {
         engine.load(catalog.clone());
 
         let input = "верблжй";
-        let results: Vec<usize> = engine.search(&input);
+        let results = engine.search(&input);
         let total = results.len();
         assert_eq!(13, total)
     }
@@ -110,7 +110,7 @@ mod tests {
         engine.load(catalog.clone());
 
         let input = "эластичн";
-        let results: Vec<usize> = engine.search(&input);
+        let results = engine.search(&input);
         let total = results.len();
         assert_eq!(222, total)
     }
@@ -122,7 +122,7 @@ mod tests {
         engine.load(catalog.clone());
 
         let input = "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48";
-        let results: Vec<usize> = engine.search(&input);
+        let results = engine.search(&input);
         let total = results.len();
         assert_eq!(464, total)
     }
