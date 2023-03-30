@@ -4,18 +4,10 @@ use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 use strsim::jaro_winkler;
 
-// let reference = "hello";
-// let strings = vec!["hola", "hello", "selem", "avani"];
-// let asdfgh = strings
-//     .iter()
-//     .position(|&r| {
-//         r == *strings
-//             .iter()
-//             .min_by(|&a, &b| osa_distance(reference, a).cmp(&osa_distance(reference, b)))
-//             .unwrap()
-//     })
-//     .unwrap();
-// println!("only element {asdfgh}");
+// Sorting:
+//     let reference = "hello";
+//     let mut strings = vec!["hola", "hello", "selem", "avani"];
+//     strings.sort_by(|a, b| osa_distance(reference, &a).cmp(&osa_distance(reference, &b)));
 
 struct SimSearchEngine {
     engine: SimSearch<usize>,
