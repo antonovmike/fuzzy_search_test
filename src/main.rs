@@ -15,19 +15,24 @@ fn main() {
 
         input = input.trim().to_string();
 
-        let mut results: Vec<u32> = engine.search(&input);
+        let results: Vec<u32> = engine.search(&input);
 
+        // TURN INTO MAP
         let total = results.len();
         if total == 0 {
             println!("Нет совпадений");
             continue;
         }
-        if total > 10 {
-            results.drain(10..);
-        }
-        for index in results {
-            println!("{}, {:?}", index, catalog[index as usize].1)
-        }
+        results
+            .into_iter()
+            .take(10)
+            .for_each(|i| println!("{i}, {}", catalog[i as usize].1));
+        // if total > 10 {
+        // results.drain(10..);
+        // }
+        // for index in results {
+        // println!("{}, {:?}", index, catalog[index as usize].1)
+        // }
         println!("всего: {}", total);
     }
 }
