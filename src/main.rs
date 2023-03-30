@@ -27,7 +27,7 @@ impl Search for SimSearchEngine {
             .for_each(|(i, data)| self.engine.insert(*i, data))
     }
     fn search(&self, input: &str) -> Vec<u32> {
-        unimplemented!()
+        self.engine.search(input)
     }
 }
 
