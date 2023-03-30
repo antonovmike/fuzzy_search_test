@@ -65,13 +65,23 @@ mod tests {
     use super::*;
 
     #[test]
-    fn total_mistape() {
+    fn total_mistape_1() {
         let (_catalog, engine) = load();
 
         let input = "верблжй";
         let results: Vec<u32> = engine.search(&input);
         let total = results.len();
         assert_eq!(13, total)
+    }
+
+    #[test]
+    fn total_mistape_2() {
+        let (_catalog, engine) = load();
+
+        let input = "эластичн";
+        let results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        assert_eq!(222, total)
     }
 
     #[test]
@@ -109,6 +119,33 @@ mod tests {
         let key: Vec<u32> = vec![
             1943, 4347, 4348, 4363, 4364, 10482, 10483, 10484, 10485, 11237,
         ];
+
+        assert_eq!(key, answervec)
+    }
+
+    #[test]
+    fn top_10_mistape_2() {
+        let (catalog, engine) = load();
+
+        let input = "эластичн";
+        engine.search(&input);
+
+        let mut results: Vec<u32> = engine.search(&input);
+        let total = results.len();
+        if total > 10 {
+            results.drain(10..);
+        }
+        let mut top_ten: Vec<(u32, String)> = vec![];
+        for index in results {
+            top_ten.push((index, catalog[index as usize].1.clone()))
+        }
+
+        let mut answervec: Vec<u32> = vec![];
+        for (i, _) in top_ten.iter() {
+            answervec.push(*i)
+        }
+
+        let key: Vec<u32> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
 
         assert_eq!(key, answervec)
     }
