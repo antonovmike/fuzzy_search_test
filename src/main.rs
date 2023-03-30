@@ -4,10 +4,15 @@ use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 use strsim::jaro_winkler;
 
-// Sorting:
-//     let reference = "hello";
-//     let mut strings = vec!["hola", "hello", "selem", "avani"];
-//     strings.sort_by(|a, b| osa_distance(reference, &a).cmp(&osa_distance(reference, &b)));
+// tuple index and distance:
+// let reference = "hello";
+// let mut strings = vec!["hola", "hello", "selem", "avani"];
+// let tupvek: Vec<(usize, f64)> = strings
+//     .iter()
+//     .enumerate()
+//     .map(|(i, e)| (i, jaro(reference, e)))
+//     .collect();
+// println!("{tupvek:?}");
 
 struct SimSearchEngine {
     engine: SimSearch<usize>,
