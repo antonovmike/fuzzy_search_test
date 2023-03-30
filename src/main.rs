@@ -20,6 +20,27 @@ trait Search {
     fn search(&self, input: &str) -> Vec<usize>;
 }
 
+struct StrSearchEngine {
+    catalog: Vec<(usize, String)>,
+}
+
+impl StrSearchEngine {
+    fn new() -> Self {
+        StrSearchEngine {
+            catalog: Vec::new(),
+        }
+    }
+}
+
+impl Search for StrSearchEngine {
+    fn load(&mut self, mut catalog: Vec<(usize, String)>) {
+        unimplemented!()
+    }
+    fn search(&self, input: &str) -> Vec<usize> {
+        unimplemented!()
+    }
+}
+
 impl Search for SimSearchEngine {
     fn load(&mut self, catalog: Vec<(usize, String)>) {
         catalog
@@ -28,18 +49,6 @@ impl Search for SimSearchEngine {
     }
     fn search(&self, input: &str) -> Vec<usize> {
         self.engine.search(input)
-    }
-}
-
-struct SrtSimEngine {
-    catalog: Vec<(usize, String)>,
-}
-
-impl SrtSimEngine {
-    fn new() -> Self {
-        SrtSimEngine {
-            catalog: Vec::new(),
-        }
     }
 }
 
