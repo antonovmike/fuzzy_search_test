@@ -31,6 +31,18 @@ impl Search for SimSearchEngine {
     }
 }
 
+struct SrtSimEngine {
+    catalog: Vec<(usize, String)>,
+}
+
+impl SrtSimEngine {
+    fn new() -> Self {
+        SrtSimEngine {
+            catalog: Vec::new(),
+        }
+    }
+}
+
 fn main() {
     let catalog = load();
 
