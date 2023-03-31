@@ -87,7 +87,7 @@ fn main() {
     // let mut engine = StrSearchEngine::new();
     // engine.load(catalog.clone());
 
-    let engines: Vec<Box<dyn Search>> = vec![
+    let mut engines: Vec<Box<dyn Search>> = vec![
         Box::new(SimSearchEngine::new()),
         Box::new(StrSearchEngine::new()),
     ];
@@ -103,8 +103,9 @@ fn main() {
 
         // let results = engine.search(&input);
 
-        for engine in &engines {
+        for engine in &mut engines {
             println!("\t{}", engine.name());
+            engine.load(catalog.clone());
             let results = engine.search(&input);
             let total = results.len();
             if total == 0 {
