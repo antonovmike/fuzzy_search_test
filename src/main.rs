@@ -49,6 +49,7 @@ impl Search for StrSearchEngine {
             .iter()
             .enumerate()
             .map(|(i, (_u, s))| (i, jaro(input, s)))
+            .map(|(i, d)| (i, d.abs()))
             // .filter(|(_i, d)| d.is_normal())
             // .filter(|(_i, d)| [std::num::FpCategory::Normal].contains(&d.classify()))
             .collect();
@@ -76,8 +77,13 @@ fn main() {
     let catalog = load();
 
     // let mut engine = SimSearchEngine::new();
-    let mut engine = StrSearchEngine::new();
-    engine.load(catalog.clone());
+    // let mut engine = StrSearchEngine::new();
+    // engine.load(catalog.clone());
+
+    let engines: Vec<Box<dyn Search>> = vec![
+        Box::new(SimSearchEngine::new()),
+        Box::new(StrSearchEngine::new()),
+    ];
 
     loop {
         print!("Текст для поиска: ");
@@ -88,19 +94,34 @@ fn main() {
 
         input = input.trim().to_string();
 
-        let results = engine.search(&input);
+        // let results = engine.search(&input);
 
-        let total = results.len();
-        if total == 0 {
-            println!("Нет совпадений");
-            continue;
+        for engine in &engines {
+            let results = engine.search(&input);
+            let total = results.len();
+            if total == 0 {
+                println!("Нет овпадений");
+                continue;
+            }
+            results
+                .into_iter()
+                .take(10)
+                .for_each(|i| println!("{i}, {:?}", catalog[i as usize].1));
+
+            println!("всего: {}", total);
         }
-        results
-            .into_iter()
-            .take(10)
-            .for_each(|i| println!("{i}, {:?}", catalog[i as usize].1));
 
-        println!("всего: {}", total);
+        // let total = results.len();
+        // if total == 0 {
+        //     println!("Нет совпадений");
+        //     continue;
+        // }
+        // results
+        //     .into_iter()
+        //     .take(10)
+        //     .for_each(|i| println!("{i}, {:?}", catalog[i as usize].1));
+
+        // println!("всего: {}", total);
     }
 }
 
