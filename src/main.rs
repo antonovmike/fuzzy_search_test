@@ -2,7 +2,7 @@ use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
-use strsim::{jaro, jaro_winkler, osa_distance};
+use strsim::{damerau_levenshtein, jaro, jaro_winkler, normalized_levenshtein, osa_distance};
 
 struct SimSearchEngine {
     engine: SimSearch<usize>,
@@ -54,12 +54,20 @@ impl Search for StrSearchEngine {
             .catalog
             .iter()
             .enumerate()
-            .map(|(i, (_u, s))| (i, jaro(input, s)))
+            .map(|(i, (_u, s))| (i, damerau_levenshtein(input, s) as f64))
             .map(|(i, d)| (i, d.abs()))
             // .filter(|(_i, d)| d.is_normal())
             // .filter(|(_i, d)| [std::num::FpCategory::Normal].contains(&d.classify()))
             .collect();
-        tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
+        tupvek.sort_by(|(_ia, da), (_ib, db)| da.partial_cmp(db).unwrap());
+
+        let mut index = 0;
+        for i in &tupvek {
+            if index < 5 {
+                println!("{:?}", i);
+            }
+            index += 1
+        }
 
         tupvek.into_iter().map(|(i, _d)| i).collect()
 
