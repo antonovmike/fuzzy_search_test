@@ -50,6 +50,7 @@ impl Search for StrSearchEngine {
             .enumerate()
             .map(|(_i, (_u, s))| osa_distance(input, s))
             .collect();
+
         distances.into_iter().take(10).collect()
     }
 }
@@ -63,6 +64,7 @@ fn main() {
     let catalog = load();
 
     let mut engine = SimSearchEngine::new();
+    // let mut engine = StrSearchEngine::new();
     engine.load(catalog.clone());
 
     loop {
