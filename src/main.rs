@@ -63,8 +63,8 @@ trait Search {
 fn main() {
     let catalog = load();
 
-    let mut engine = SimSearchEngine::new();
-    // let mut engine = StrSearchEngine::new();
+    // let mut engine = SimSearchEngine::new();
+    let mut engine = StrSearchEngine::new();
     engine.load(catalog.clone());
 
     loop {
