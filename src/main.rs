@@ -2,7 +2,7 @@ use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
-use strsim::osa_distance;
+use strsim::{jaro, osa_distance};
 
 struct SimSearchEngine {
     engine: SimSearch<usize>,
@@ -44,6 +44,14 @@ impl Search for StrSearchEngine {
         self.catalog.append(&mut catalog);
     }
     fn search(&self, input: &str) -> Vec<usize> {
+        let mut tupvek: Vec<(usize, f64)> = self
+            .catalog
+            .iter()
+            .enumerate()
+            .map(|(i, (_u, s))| (i, jaro(input, s)))
+            .collect();
+        tupvek.sort_by(|(ia, da), (ib, db)| da.partial_cmp(db).unwrap());
+
         let distances: Vec<usize> = self
             .catalog
             .iter()
