@@ -52,9 +52,9 @@ impl Search for StrSearchEngine {
             // .filter(|(_i, d)| d.is_normal())
             // .filter(|(_i, d)| [std::num::FpCategory::Normal].contains(&d.classify()))
             .collect();
-        tupvek.sort_by(|(_ia, da), (_ib, db)| da.partial_cmp(db).unwrap());
+        tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
-        tupvek.into_iter().take(10).map(|(i, _d)| i).collect()
+        tupvek.into_iter().map(|(i, _d)| i).collect()
 
         // let distances: Vec<usize> = self
         //     .catalog
