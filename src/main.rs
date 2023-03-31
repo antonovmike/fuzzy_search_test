@@ -49,6 +49,8 @@ impl Search for StrSearchEngine {
             .iter()
             .enumerate()
             .map(|(i, (_u, s))| (i, jaro(input, s)))
+            // .filter(|(_i, d)| d.is_normal())
+            // .filter(|(_i, d)| [std::num::FpCategory::Normal].contains(&d.classify()))
             .collect();
         tupvek.sort_by(|(_ia, da), (_ib, db)| da.partial_cmp(db).unwrap());
 
