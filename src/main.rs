@@ -2,7 +2,7 @@ use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
-use strsim::{jaro, jaro_winkler};
+use strsim::{jaro, jaro_winkler, osa_distance};
 
 // tuple (index, distance):
 // let reference = "hello";
@@ -56,19 +56,18 @@ impl Search for StrSearchEngine {
     }
     fn search(&self, input: &str) -> Vec<usize> {
         // let qwe: f64 = jaro_winkler(input, &self.catalog[1].1);
-        let tupvek: Vec<(usize, f64)> = self
-            .catalog
+        self.catalog
             .iter()
             .enumerate()
-            .map(|(i, (_u, s))| (i, jaro(input, s)))
-            .collect();
-        unimplemented!()
+            .map(|(_i, (_u, s))| osa_distance(input, s))
+            .collect()
     }
 }
 
 trait Search {
     fn load(&mut self, catalog: Vec<(usize, String)>);
     fn search(&self, input: &str) -> Vec<usize>;
+    // fn search64(&self, input: &str) -> Vec<f64>;
 }
 
 fn main() {
