@@ -105,8 +105,6 @@ fn main() {
 
         input = input.trim().to_string();
 
-        // let results = engine.search(&input);
-
         for engine in &mut engines {
             println!("\t{}", engine.name());
 
@@ -124,6 +122,7 @@ fn main() {
             println!("всего: {}", total);
         }
 
+        // let results = engine.search(&input);
         // let total = results.len();
         // if total == 0 {
         //     println!("Нет совпадений");
@@ -133,7 +132,6 @@ fn main() {
         //     .into_iter()
         //     .take(10)
         //     .for_each(|i| println!("{i}, {:?}", catalog[i as usize].1));
-
         // println!("всего: {}", total);
     }
 }
