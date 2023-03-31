@@ -50,16 +50,18 @@ impl Search for StrSearchEngine {
             .enumerate()
             .map(|(i, (_u, s))| (i, jaro(input, s)))
             .collect();
-        tupvek.sort_by(|(ia, da), (ib, db)| da.partial_cmp(db).unwrap());
+        tupvek.sort_by(|(_ia, da), (_ib, db)| da.partial_cmp(db).unwrap());
 
-        let distances: Vec<usize> = self
-            .catalog
-            .iter()
-            .enumerate()
-            .map(|(_i, (_u, s))| osa_distance(input, s))
-            .collect();
+        tupvek.into_iter().take(10).map(|(i, _d)| i).collect()
 
-        distances.into_iter().take(10).collect()
+        // let distances: Vec<usize> = self
+        //     .catalog
+        //     .iter()
+        //     .enumerate()
+        //     .map(|(_i, (_u, s))| osa_distance(input, s))
+        //     .collect();
+
+        // distances.into_iter().take(10).collect()
     }
 }
 
