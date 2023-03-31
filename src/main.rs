@@ -92,6 +92,10 @@ fn main() {
         Box::new(StrSearchEngine::new()),
     ];
 
+    for engine in &mut engines {
+        engine.load(catalog.clone())
+    }
+
     loop {
         print!("Текст для поиска: ");
         io::stdout().flush().unwrap();
@@ -105,7 +109,7 @@ fn main() {
 
         for engine in &mut engines {
             println!("\t{}", engine.name());
-            engine.load(catalog.clone());
+
             let results = engine.search(&input);
             let total = results.len();
             if total == 0 {
