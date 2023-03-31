@@ -51,11 +51,8 @@ impl StrSearchEngine {
 
 impl Search for StrSearchEngine {
     fn load(&mut self, mut catalog: Vec<(usize, String)>) {
-        let tupvek: Vec<(usize, f64)> = catalog
-            .iter()
-            .enumerate()
-            .map(|(i, (u, s))| (i, jaro("TEST", s)))
-            .collect();
+        self.catalog.append(&mut catalog);
+        // catalog.iter().for_each(|(i, d)| (*i, jaro("TEST", d)));
     }
     fn search(&self, input: &str) -> Vec<usize> {
         let qwe: f64 = jaro_winkler(input, "catalog");
