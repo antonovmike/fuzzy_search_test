@@ -44,11 +44,13 @@ impl Search for StrSearchEngine {
         self.catalog.append(&mut catalog);
     }
     fn search(&self, input: &str) -> Vec<usize> {
-        self.catalog
+        let distances: Vec<usize> = self
+            .catalog
             .iter()
             .enumerate()
             .map(|(_i, (_u, s))| osa_distance(input, s))
-            .collect()
+            .collect();
+        distances.into_iter().take(10).collect()
     }
 }
 
