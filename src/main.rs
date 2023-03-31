@@ -2,7 +2,7 @@ use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
-use strsim::{jaro, osa_distance};
+use strsim::{jaro, jaro_winkler, osa_distance};
 
 struct SimSearchEngine {
     engine: SimSearch<usize>,
@@ -17,6 +17,9 @@ impl SimSearchEngine {
 }
 
 impl Search for SimSearchEngine {
+    fn name(&self) -> String {
+        return "SimSearch".into();
+    }
     fn load(&mut self, catalog: Vec<(usize, String)>) {
         catalog
             .iter()
@@ -40,6 +43,9 @@ impl StrSearchEngine {
 }
 
 impl Search for StrSearchEngine {
+    fn name(&self) -> String {
+        return "SrtSimSearch".into();
+    }
     fn load(&mut self, mut catalog: Vec<(usize, String)>) {
         self.catalog.append(&mut catalog);
     }
@@ -69,6 +75,7 @@ impl Search for StrSearchEngine {
 }
 
 trait Search {
+    fn name(&self) -> String;
     fn load(&mut self, catalog: Vec<(usize, String)>);
     fn search(&self, input: &str) -> Vec<usize>;
 }
@@ -97,6 +104,7 @@ fn main() {
         // let results = engine.search(&input);
 
         for engine in &engines {
+            println!("\t{}", engine.name());
             let results = engine.search(&input);
             let total = results.len();
             if total == 0 {
