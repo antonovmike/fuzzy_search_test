@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 
 mod traits;
-use traits::{Search, SimSearchEngine, StrSearchEngine};
+use traits::{RustFuzzySearch, Search, SimSearchEngine, StrSearchEngine};
 
 fn main() {
     let catalog = load();
@@ -11,6 +11,7 @@ fn main() {
     let mut engines: Vec<Box<dyn Search>> = vec![
         Box::new(SimSearchEngine::new()),
         Box::new(StrSearchEngine::new()),
+        Box::new(RustFuzzySearch::new()),
     ];
 
     for engine in &mut engines {

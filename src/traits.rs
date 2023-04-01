@@ -1,8 +1,53 @@
+use rust_fuzzy_search::fuzzy_compare;
 use simsearch::{SearchOptions, SimSearch};
 use strsim::{
     damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
     normalized_levenshtein, osa_distance,
 };
+pub trait Search {
+    fn name(&self) -> String;
+    fn load(&mut self, catalog: Vec<(usize, String)>);
+    fn search(&self, input: &str) -> Vec<usize>;
+}
+
+// RustFuzzySearch
+
+pub struct RustFuzzySearch {
+    catalog: Vec<(usize, String)>,
+}
+
+impl RustFuzzySearch {
+    pub fn new() -> Self {
+        RustFuzzySearch {
+            catalog: Vec::new(),
+        }
+    }
+}
+
+impl Search for RustFuzzySearch {
+    fn name(&self) -> String {
+        return "RustFuzzySearch".into();
+    }
+
+    fn load(&mut self, mut catalog: Vec<(usize, String)>) {
+        self.catalog.append(&mut catalog);
+    }
+
+    fn search(&self, input: &str) -> Vec<usize> {
+        let mut tupvek: Vec<(usize, f64)> = self
+            .catalog
+            .iter()
+            .enumerate()
+            .map(|(i, (_u, s))| (i, fuzzy_compare(input, s) as f64))
+            .collect();
+
+        tupvek.sort_by(|(_ia, da), (_ib, db)| da.partial_cmp(db).unwrap());
+
+        tupvek.into_iter().map(|(i, _d)| i).collect()
+    }
+}
+
+// -----------------------------
 
 pub struct SimSearchEngine {
     engine: SimSearch<usize>,
@@ -66,10 +111,4 @@ impl Search for StrSearchEngine {
 
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
-}
-
-pub trait Search {
-    fn name(&self) -> String;
-    fn load(&mut self, catalog: Vec<(usize, String)>);
-    fn search(&self, input: &str) -> Vec<usize>;
 }
