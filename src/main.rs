@@ -1,104 +1,12 @@
-use simsearch::{SearchOptions, SimSearch};
 use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
-use strsim::{
-    damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
-    normalized_levenshtein, osa_distance,
-};
 
-struct SimSearchEngine {
-    engine: SimSearch<usize>,
-}
-
-impl SimSearchEngine {
-    fn new() -> Self {
-        SimSearchEngine {
-            engine: SimSearch::new_with(SearchOptions::new().threshold(0.9)),
-        }
-    }
-}
-
-impl Search for SimSearchEngine {
-    fn name(&self) -> String {
-        return "SimSearch".into();
-    }
-    fn load(&mut self, catalog: Vec<(usize, String)>) {
-        catalog
-            .iter()
-            .for_each(|(i, data)| self.engine.insert(*i, data))
-    }
-    fn search(&self, input: &str) -> Vec<usize> {
-        self.engine.search(input)
-    }
-}
-
-struct StrSearchEngine {
-    catalog: Vec<(usize, String)>,
-}
-
-impl StrSearchEngine {
-    fn new() -> Self {
-        StrSearchEngine {
-            catalog: Vec::new(),
-        }
-    }
-}
-
-impl Search for StrSearchEngine {
-    fn name(&self) -> String {
-        return "SrtSimSearch".into();
-    }
-    fn load(&mut self, mut catalog: Vec<(usize, String)>) {
-        self.catalog.append(&mut catalog);
-    }
-    fn search(&self, input: &str) -> Vec<usize> {
-        let mut tupvek: Vec<(usize, f64)> = self
-            .catalog
-            .iter()
-            .enumerate()
-            // .map(|(i, (_u, s))| (i, damerau_levenshtein(input, s) as f64))
-            .map(|(i, (_u, s))| (i, jaro(input, s) as f64))
-            // .map(|(i, (_u, s))| (i, osa_distance(input, s) as f64))
-            // .map(|(i, d)| (i, d.abs()))
-            // .filter(|(_i, d)| d.is_normal())
-            // .filter(|(_i, d)| [std::num::FpCategory::Normal].contains(&d.classify()))
-            .collect();
-        tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
-
-        // let mut index = 0;
-        // for i in &tupvek {
-        //     if index < 10 {
-        //         println!("{:?}", i);
-        //     }
-        //     index += 1
-        // }
-
-        tupvek.into_iter().map(|(i, _d)| i).collect()
-
-        // let distances: Vec<usize> = self
-        //     .catalog
-        //     .iter()
-        //     .enumerate()
-        //     .map(|(_i, (_u, s))| osa_distance(input, s))
-        //     .collect();
-
-        // distances.into_iter().take(10).collect()
-    }
-}
-
-trait Search {
-    fn name(&self) -> String;
-    fn load(&mut self, catalog: Vec<(usize, String)>);
-    fn search(&self, input: &str) -> Vec<usize>;
-}
+mod traits;
+use traits::{Search, SimSearchEngine, StrSearchEngine};
 
 fn main() {
     let catalog = load();
-
-    // let mut engine = SimSearchEngine::new();
-    // let mut engine = StrSearchEngine::new();
-    // engine.load(catalog.clone());
 
     let mut engines: Vec<Box<dyn Search>> = vec![
         Box::new(SimSearchEngine::new()),
@@ -134,18 +42,6 @@ fn main() {
 
             println!("всего: {}", total);
         }
-
-        // let results = engine.search(&input);
-        // let total = results.len();
-        // if total == 0 {
-        //     println!("Нет совпадений");
-        //     continue;
-        // }
-        // results
-        //     .into_iter()
-        //     .take(10)
-        //     .for_each(|i| println!("{i}, {:?}", catalog[i as usize].1));
-        // println!("всего: {}", total);
     }
 }
 
