@@ -38,10 +38,12 @@ impl Search for RustFuzzySearch {
             .catalog
             .iter()
             .enumerate()
-            .map(|(i, (_u, s))| (i, fuzzy_compare(&input.to_uppercase(), s) as f64))
-            // .map(|(i, (_u, s))| (i, fuzzy_search(input, s) as f64))
-            // .map(|(i, (_u, s))| (i, fuzzy_search_sorted()
-            // .map(|(i, (_u, s))| (i, fuzzy_search_threshold()
+            .map(|(i, (_u, s))| {
+                (
+                    i,
+                    fuzzy_compare(&input.to_lowercase(), &s.to_lowercase()) as f64,
+                )
+            })
             .collect();
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
@@ -105,7 +107,7 @@ impl Search for StrSearchEngine {
             .iter()
             .enumerate()
             // .map(|(i, (_u, s))| (i, damerau_levenshtein(input, s) as f64))
-            .map(|(i, (_u, s))| (i, jaro(&input.to_uppercase(), s) as f64))
+            .map(|(i, (_u, s))| (i, jaro(&input.to_lowercase(), &s.to_lowercase()) as f64))
             // .map(|(i, (_u, s))| (i, osa_distance(input, s) as f64))
             // .map(|(i, d)| (i, d.abs()))
             // .filter(|(_i, d)| d.is_normal())
