@@ -1,26 +1,25 @@
 # posfz
 
 
-Слова для демо версии поика:
-
-ЭЛЬКАР Р-Р 30% 25МЛ
-
-ПИК-ФАРМА ПРО, РОССИЯ
-
-ВИТРУМ ТАБ №130
-
-ЮНИФАРМ, США
-
-АЛФАГИН КАПС №20
-
-ХЕРБИОН, ПАКИСТАН
-
-
 механизмы нечеткого поиска / fuzzy search
 
+1. 
 https://lib.rs/crates/simsearch
 
+2. 
 https://crates.io/crates/strsim
+
+При переключении с usize метрики на f64 метрику надо менять порядок сравнения:
+```Rust
+db.partial_cmp(da) // для f64
+da.partial_cmp(db) // для usize
+````
+
+3. 
+https://lib.rs/crates/tantivy
+
+4. 
+https://lib.rs/crates/sublime_fuzzy
 
 commandline interface https://lib.rs/crates/rustyline
 
