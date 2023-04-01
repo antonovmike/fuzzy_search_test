@@ -28,7 +28,7 @@ fn main() {
         input = input.trim().to_string();
 
         for engine in &mut engines {
-            println!("\t{}", engine.name());
+            println!("--------------------\n\t{}", engine.name());
 
             let results = engine.search(&input);
             let total = results.len();

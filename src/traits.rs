@@ -10,7 +10,7 @@ pub trait Search {
     fn search(&self, input: &str) -> Vec<usize>;
 }
 
-// RustFuzzySearch
+// -----------------------------
 
 pub struct RustFuzzySearch {
     catalog: Vec<(usize, String)>,
@@ -41,7 +41,7 @@ impl Search for RustFuzzySearch {
             .map(|(i, (_u, s))| (i, fuzzy_compare(input, s) as f64))
             .collect();
 
-        tupvek.sort_by(|(_ia, da), (_ib, db)| da.partial_cmp(db).unwrap());
+        tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
@@ -74,6 +74,8 @@ impl Search for SimSearchEngine {
         self.engine.search(input)
     }
 }
+
+// -----------------------------
 
 pub struct StrSearchEngine {
     catalog: Vec<(usize, String)>,
