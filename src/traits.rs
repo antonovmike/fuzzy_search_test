@@ -1,4 +1,4 @@
-use rust_fuzzy_search::fuzzy_compare;
+use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
 use simsearch::{SearchOptions, SimSearch};
 use strsim::{
     damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
@@ -38,7 +38,10 @@ impl Search for RustFuzzySearch {
             .catalog
             .iter()
             .enumerate()
-            .map(|(i, (_u, s))| (i, fuzzy_compare(input, s) as f64))
+            .map(|(i, (_u, s))| (i, fuzzy_compare(&input.to_uppercase(), s) as f64))
+            // .map(|(i, (_u, s))| (i, fuzzy_search(input, s) as f64))
+            // .map(|(i, (_u, s))| (i, fuzzy_search_sorted()
+            // .map(|(i, (_u, s))| (i, fuzzy_search_threshold()
             .collect();
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
@@ -102,7 +105,7 @@ impl Search for StrSearchEngine {
             .iter()
             .enumerate()
             // .map(|(i, (_u, s))| (i, damerau_levenshtein(input, s) as f64))
-            .map(|(i, (_u, s))| (i, jaro(input, s) as f64))
+            .map(|(i, (_u, s))| (i, jaro(&input.to_uppercase(), s) as f64))
             // .map(|(i, (_u, s))| (i, osa_distance(input, s) as f64))
             // .map(|(i, d)| (i, d.abs()))
             // .filter(|(_i, d)| d.is_normal())
