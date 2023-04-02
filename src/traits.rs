@@ -1,9 +1,19 @@
+#[macro_use]
+use tantivy::collector::TopDocs;
+use tantivy::query::QueryParser;
+use tantivy::schema::*;
+use tantivy::Index;
+use tantivy::ReloadPolicy;
+use tempfile::TempDir;
+
 use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
 use simsearch::{SearchOptions, SimSearch};
 use strsim::{
     damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
     normalized_levenshtein, osa_distance,
 };
+
+
 pub trait Search {
     fn name(&self) -> String;
     fn load(&mut self, catalog: Vec<(usize, String)>);
