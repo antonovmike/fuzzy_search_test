@@ -1,5 +1,5 @@
-use tantivy::doc;
 use tantivy::collector::TopDocs;
+use tantivy::doc;
 use tantivy::query::QueryParser;
 use tantivy::{schema::*, Index, ReloadPolicy};
 use tempfile::TempDir;
@@ -37,10 +37,7 @@ impl TantivySearch {
 
         let index = Index::create_in_dir(&path, schema.clone()).unwrap();
 
-        TantivySearch {
-            schema,
-            index,
-        }
+        TantivySearch { schema, index }
     }
 }
 
@@ -64,64 +61,28 @@ impl Search for TantivySearch {
     }
 
     fn search(&self, input: &str) -> Vec<usize> {
-        todo!()
+        let reader = self
+            .index
+            .reader_builder()
+            .reload_policy(ReloadPolicy::OnCommit)
+            .try_into()
+            .unwrap();
+
+        let searcher = reader.searcher();
+// FIX DEFAULT FIELDS
+        let query_parser = QueryParser::for_index(&self.index, vec![ ]);
+        let query = query_parser.parse_query(input).unwrap();
+
+        let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
+
+        for (score, doc_address) in top_docs {
+            let retrieved_doc = searcher.doc(doc_address).unwrap();
+            let the_answer = self.schema.to_json(&retrieved_doc);
+            println!("{} {}", score, the_answer);
+        }
+
+        vec![]
     }
-}
-#[macro_use]
-fn tan() -> tantivy::Result<()> {
-    let index_path = TempDir::new()?;
-
-    let mut schema_builder = Schema::builder();
-    schema_builder.add_text_field("body", TEXT | STORED);
-
-    let schema = schema_builder.build();
-
-    let index = Index::create_in_dir(&index_path, schema.clone())?;
-
-    let mut index_writer = index.writer(50_000_000)?;
-
-    let body = schema.get_field("body").unwrap();
-
-    let database = [
-        "ПОЯС ДЛЯ СПИНЫ И ПОЗВОНОЧНИКА Р. 54",
-        "ПОЯС ДЛЯ ПОХУДЕНИЯ ТОНУС Р. 48-50",
-        "ПОЯС ДЛЯ ПОДДЕРЖКИ ЖИВОТА ТОНУС Р. 54",
-        "ПОЯС ДЛЯ ПОХУДЕНИЯ ТОНУС",
-        "ПОЯС ЭЛАСТИЧНЫЙ Р. 48",
-        "ПОЯС ПОСЛЕОПЕРАЦИОНЫЙ",
-        "ПОЯС ДЛЯ ПОДДЕРЖКИ ЖИВОТА ТОНУС Р. 54",
-    ];
-    #[allow(unused)]
-    #[macro_use]
-    for i in database {
-        index_writer.add_document(doc!(
-            body => i
-        ));
-        index_writer.commit()?;
-    }
-
-    index_writer.commit()?;
-
-    let reader = index
-        .reader_builder()
-        .reload_policy(ReloadPolicy::OnCommit)
-        .try_into()?;
-
-    let searcher = reader.searcher();
-
-    let query_parser = QueryParser::for_index(&index, vec![body]);
-
-    let query = query_parser.parse_query("похудения")?;
-
-    let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
-
-    for (score, doc_address) in top_docs {
-        let retrieved_doc = searcher.doc(doc_address)?;
-        let the_answer = schema.to_json(&retrieved_doc);
-        println!("{} {}", score, the_answer);
-    }
-
-    Ok(())
 }
 
 // -----------------------------
