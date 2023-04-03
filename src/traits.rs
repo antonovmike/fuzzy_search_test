@@ -47,7 +47,7 @@ impl Search for TantivySearch {
     }
 
     fn load(&mut self, catalog: Vec<(usize, String)>) {
-        let mut writer = self.index.writer(20_000).unwrap();
+        let mut writer = self.index.writer(3_000_000).unwrap();
         let body = self.schema.get_field("body").unwrap();
 
         for (index, text) in catalog {
