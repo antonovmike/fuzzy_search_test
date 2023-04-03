@@ -1,11 +1,25 @@
-use std::fs::File;
+use std::fs::{File, self};
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
+use std::path::Path;
 
 mod traits;
 use traits::{RustFuzzySearch, Search, SimSearchEngine, StrSearchEngine, TantivySearch};
 
+fn remove_files_in_dir<P: AsRef<Path>>(path: P) -> std::io::Result<()> {
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
+        let path = entry.path();
+        if entry.file_type()?.is_file() {
+            fs::remove_file(path)?;
+        }
+    }
+    Ok(())
+}
+
 fn main() {
+    remove_files_in_dir("tantivy");
+
     let catalog = load();
 
     let mut engines: Vec<Box<dyn Search>> = vec![
