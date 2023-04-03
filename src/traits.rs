@@ -87,6 +87,7 @@ impl Search for TantivySearch {
         top_docs
             .into_iter()
             .map(|(score, doc_address)| {
+                println!("{score}");
                 let retrieved_doc = searcher.doc(doc_address).unwrap();
 
                 let index = if let Some(v) = retrieved_doc.get_first(id) {
