@@ -222,6 +222,11 @@ impl Search for StrSearchEngine {
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
+        tupvek
+            .iter()
+            .take(10)
+            .for_each(|(_u, f)| println!("{f}"));
+        
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
 }
