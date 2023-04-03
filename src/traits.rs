@@ -79,26 +79,24 @@ impl Search for TantivySearch {
         let mut tupvek: Vec<(usize, f64)> = top_docs
             .iter()
             .enumerate()
-            .map(|(i, (_u, _s))| {
-                // let doc_address = searcher.search(&query, &TopDocs::with_limit(10)).unwrap()[i].1;
-                // let retrieved_doc = searcher.doc(doc_address).unwrap();
-                // let the_answer = self.schema.to_json(&retrieved_doc);
-                // println!("{}", the_answer);
-                // let retrieved_doc = searcher.doc(*s).unwrap();
-                // let the_answer = self.schema.to_json(&retrieved_doc);
+            .map(|(i, (score, doc_address))| {
+                let retrieved_doc = searcher.doc(*doc_address).unwrap();
+                let the_answer = self.schema.to_json(&retrieved_doc);
+                println!("TEST {}", the_answer);
                 // println!("{}", searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64);
                 (
                     i,
-                    searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
+                    // searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
+                    *score as f64,
                 )
             })
             .collect();
 
-        for (score, doc_address) in top_docs {
-            let retrieved_doc = searcher.doc(doc_address).unwrap();
-            let the_answer = self.schema.to_json(&retrieved_doc);
-            println!("TEST: {} {}", score, the_answer);
-        }
+        // for (score, doc_address) in top_docs {
+        //     let retrieved_doc = searcher.doc(doc_address).unwrap();
+        //     let the_answer = self.schema.to_json(&retrieved_doc);
+        //     println!("TEST: {} {}", score, the_answer);
+        // }
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
