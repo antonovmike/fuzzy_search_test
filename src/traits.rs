@@ -74,7 +74,7 @@ impl Search for TantivySearch {
         let query_parser = QueryParser::for_index(&self.index, vec![ field_name ]);
         let query = query_parser.parse_query(input).unwrap();
 
-        let top_docs = searcher.search(&query, &TopDocs::with_limit(11)).unwrap();
+        let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
 
         let mut tupvek: Vec<(usize, f64)> = top_docs
             .iter()
@@ -83,22 +83,17 @@ impl Search for TantivySearch {
                 let retrieved_doc = searcher.doc(*doc_address).unwrap();
                 let the_answer = self.schema.to_json(&retrieved_doc);
                 println!("TEST {}", the_answer);
-                // println!("{}", searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64);
                 (
                     i,
-                    // searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
-                    *score as f64,
+                    searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
+                    // *score as f64,
                 )
             })
             .collect();
 
-        // for (score, doc_address) in top_docs {
-        //     let retrieved_doc = searcher.doc(doc_address).unwrap();
-        //     let the_answer = self.schema.to_json(&retrieved_doc);
-        //     println!("TEST: {} {}", score, the_answer);
-        // }
-
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
+        
+        println!("{:?}", tupvek.clone());
 
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
