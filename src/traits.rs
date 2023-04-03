@@ -74,7 +74,7 @@ impl Search for TantivySearch {
         let query_parser = QueryParser::for_index(&self.index, vec![ field_name ]);
         let query = query_parser.parse_query(input).unwrap();
 
-        let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
+        let top_docs = searcher.search(&query, &TopDocs::with_limit(11)).unwrap();
 
         let mut tupvek: Vec<(usize, f64)> = top_docs
             .iter()
@@ -86,10 +86,10 @@ impl Search for TantivySearch {
                 // println!("{}", the_answer);
                 // let retrieved_doc = searcher.doc(*s).unwrap();
                 // let the_answer = self.schema.to_json(&retrieved_doc);
+                // println!("{}", searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64);
                 (
                     i,
-                    searcher.search(&query, &TopDocs::with_limit(10)).unwrap()[i].0 as f64,
-                    // *u as f64,
+                    searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
                 )
             })
             .collect();
