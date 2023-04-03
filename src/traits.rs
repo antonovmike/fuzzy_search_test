@@ -1,5 +1,4 @@
-#[allow(unused)]
-#[macro_use]
+use tantivy::doc;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::{schema::*, Index, ReloadPolicy};
@@ -23,13 +22,24 @@ pub trait Search {
 // -----------------------------
 
 pub struct TantivySearch {
-    catalog: Vec<(usize, String)>,
+    schema: Schema,
+    index: Index,
 }
 
 impl TantivySearch {
     pub fn new() -> Self {
+        let mut schema_builder = Schema::builder();
+        schema_builder.add_text_field("body", TEXT | STORED);
+
+        let schema = schema_builder.build();
+
+        let path = "./tantivy";
+
+        let index = Index::create_in_dir(&path, schema.clone()).unwrap();
+
         TantivySearch {
-            catalog: Vec::new(),
+            schema,
+            index,
         }
     }
 }
@@ -39,20 +49,22 @@ impl Search for TantivySearch {
         return "TantivySearch".into();
     }
 
-    fn load(&mut self, mut catalog: Vec<(usize, String)>) {
-        self.catalog.append(&mut catalog);
+    fn load(&mut self, catalog: Vec<(usize, String)>) {
+        let mut writer = self.index.writer(20_000).unwrap();
+        let body = self.schema.get_field("body").unwrap();
+
+        for (index, text) in catalog {
+            let mut rec = Document::default();
+            rec.add_text(body, text);
+
+            writer.add_document(rec).unwrap();
+        }
+
+        writer.commit().unwrap();
     }
 
-    fn search(&self, input: &str) -> Result<(), Vec<usize>> {
-        let index_path = TempDir::new()?;
-        let mut schema_builder = Schema::builder();
-        schema_builder.add_text_field("body", TEXT | STORED);
-        let schema = schema_builder.build();
-        let index = Index::create_in_dir(&index_path, schema.clone())?;
-        let mut index_writer = index.writer(50_000_000)?;
-        let body = schema.get_field("body").unwrap();
-
-        Ok(())
+    fn search(&self, input: &str) -> Vec<usize> {
+        todo!()
     }
 }
 #[macro_use]
