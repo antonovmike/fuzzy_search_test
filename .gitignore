@@ -10,3 +10,5 @@ Cargo.lock
 **/*.rs.bk
 
 /utf8_dbo.GOOD.Table.sql
+
+/tantivy

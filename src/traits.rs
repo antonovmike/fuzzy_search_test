@@ -59,7 +59,7 @@ impl Search for TantivySearch {
 
         writer.commit().unwrap();
     }
-
+// setup
     fn search(&self, input: &str) -> Vec<usize> {
         let reader = self
             .index
