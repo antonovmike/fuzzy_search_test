@@ -1,8 +1,10 @@
 use tantivy::collector::TopDocs;
-use tantivy::{doc, Document};
+// use tantivy::{doc, Document};
+use tantivy::Document;
 use tantivy::query::QueryParser;
-use tantivy::{Index, ReloadPolicy, DocId, DocAddress};
-use std::collections::HashMap;
+// use tantivy::{Index, ReloadPolicy, DocId, DocAddress};
+use tantivy::{Index, ReloadPolicy};
+// use std::collections::HashMap;
 
 #[allow(unused)]
 use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
@@ -65,7 +67,7 @@ impl Search for TantivySearch {
 
         writer.commit().unwrap();
     }
-// setup
+
     fn search(&self, input: &str) -> Vec<usize> {
         let reader = self
             .index
@@ -87,7 +89,10 @@ impl Search for TantivySearch {
         top_docs
             .into_iter()
             .map(|(score, doc_address)| {
+
+// METRICS
                 println!("{score}");
+
                 let retrieved_doc = searcher.doc(doc_address).unwrap();
 
                 let index = if let Some(v) = retrieved_doc.get_first(id) {
@@ -143,6 +148,11 @@ impl Search for RustFuzzySearch {
             .collect();
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
+
+        tupvek
+            .iter()
+            .take(10)
+            .for_each(|(_u, f)| println!("{f}"));
 
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
