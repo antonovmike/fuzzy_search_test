@@ -1,8 +1,8 @@
 use tantivy::collector::TopDocs;
-use tantivy::doc;
+// use tantivy::doc;
 use tantivy::query::QueryParser;
 use tantivy::{schema::*, Index, ReloadPolicy};
-use tempfile::TempDir;
+// use tempfile::TempDir;
 
 #[allow(unused)]
 use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
@@ -50,7 +50,7 @@ impl Search for TantivySearch {
         let mut writer = self.index.writer(3_000_000).unwrap();
         let body = self.schema.get_field("body").unwrap();
 
-        for (index, text) in catalog {
+        for (_index, text) in catalog {
             let mut rec = Document::default();
             rec.add_text(body, text);
 
@@ -79,10 +79,17 @@ impl Search for TantivySearch {
         let mut tupvek: Vec<(usize, f64)> = top_docs
             .iter()
             .enumerate()
-            .map(|(i, (_u, s))| {
+            .map(|(i, (_u, _s))| {
+                // let doc_address = searcher.search(&query, &TopDocs::with_limit(10)).unwrap()[i].1;
+                // let retrieved_doc = searcher.doc(doc_address).unwrap();
+                // let the_answer = self.schema.to_json(&retrieved_doc);
+                // println!("{}", the_answer);
+                // let retrieved_doc = searcher.doc(*s).unwrap();
+                // let the_answer = self.schema.to_json(&retrieved_doc);
                 (
                     i,
-                    searcher.search(&query, &TopDocs::with_limit(10)).unwrap()[0].0 as f64,
+                    searcher.search(&query, &TopDocs::with_limit(10)).unwrap()[i].0 as f64,
+                    // *u as f64,
                 )
             })
             .collect();
@@ -90,7 +97,7 @@ impl Search for TantivySearch {
         for (score, doc_address) in top_docs {
             let retrieved_doc = searcher.doc(doc_address).unwrap();
             let the_answer = self.schema.to_json(&retrieved_doc);
-            println!("{} {}", score, the_answer);
+            println!("TEST: {} {}", score, the_answer);
         }
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
