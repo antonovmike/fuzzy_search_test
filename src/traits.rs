@@ -70,7 +70,8 @@ impl Search for TantivySearch {
 
         let searcher = reader.searcher();
 // FIX DEFAULT FIELDS
-        let query_parser = QueryParser::for_index(&self.index, vec![  ]);
+        let field_name = self.index.schema().get_field("body").unwrap();
+        let query_parser = QueryParser::for_index(&self.index, vec![ field_name ]);
         let query = query_parser.parse_query(input).unwrap();
 
         let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
