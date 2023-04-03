@@ -2,8 +2,6 @@
 #[macro_use]
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
-// use tantivy::schema::*;
-// use tantivy::Index;
 use tantivy::{schema::*, Index, ReloadPolicy};
 use tempfile::TempDir;
 
@@ -30,7 +28,9 @@ pub struct TantivySearch {
 
 impl TantivySearch {
     pub fn new() -> Self {
-        unimplemented!()
+        TantivySearch {
+            catalog: Vec::new(),
+        }
     }
 }
 
@@ -40,12 +40,76 @@ impl Search for TantivySearch {
     }
 
     fn load(&mut self, mut catalog: Vec<(usize, String)>) {
-        unimplemented!()
+        self.catalog.append(&mut catalog);
     }
 
-    fn search(&self, input: &str) -> Vec<usize> {
-        unimplemented!()
+    fn search(&self, input: &str) -> Result<(), Vec<usize>> {
+        let index_path = TempDir::new()?;
+        let mut schema_builder = Schema::builder();
+        schema_builder.add_text_field("body", TEXT | STORED);
+        let schema = schema_builder.build();
+        let index = Index::create_in_dir(&index_path, schema.clone())?;
+        let mut index_writer = index.writer(50_000_000)?;
+        let body = schema.get_field("body").unwrap();
+
+        Ok(())
     }
+}
+#[macro_use]
+fn tan() -> tantivy::Result<()> {
+    let index_path = TempDir::new()?;
+
+    let mut schema_builder = Schema::builder();
+    schema_builder.add_text_field("body", TEXT | STORED);
+
+    let schema = schema_builder.build();
+
+    let index = Index::create_in_dir(&index_path, schema.clone())?;
+
+    let mut index_writer = index.writer(50_000_000)?;
+
+    let body = schema.get_field("body").unwrap();
+
+    let database = [
+        "ПОЯС ДЛЯ СПИНЫ И ПОЗВОНОЧНИКА Р. 54",
+        "ПОЯС ДЛЯ ПОХУДЕНИЯ ТОНУС Р. 48-50",
+        "ПОЯС ДЛЯ ПОДДЕРЖКИ ЖИВОТА ТОНУС Р. 54",
+        "ПОЯС ДЛЯ ПОХУДЕНИЯ ТОНУС",
+        "ПОЯС ЭЛАСТИЧНЫЙ Р. 48",
+        "ПОЯС ПОСЛЕОПЕРАЦИОНЫЙ",
+        "ПОЯС ДЛЯ ПОДДЕРЖКИ ЖИВОТА ТОНУС Р. 54",
+    ];
+    #[allow(unused)]
+    #[macro_use]
+    for i in database {
+        index_writer.add_document(doc!(
+            body => i
+        ));
+        index_writer.commit()?;
+    }
+
+    index_writer.commit()?;
+
+    let reader = index
+        .reader_builder()
+        .reload_policy(ReloadPolicy::OnCommit)
+        .try_into()?;
+
+    let searcher = reader.searcher();
+
+    let query_parser = QueryParser::for_index(&index, vec![body]);
+
+    let query = query_parser.parse_query("похудения")?;
+
+    let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
+
+    for (score, doc_address) in top_docs {
+        let retrieved_doc = searcher.doc(doc_address)?;
+        let the_answer = schema.to_json(&retrieved_doc);
+        println!("{} {}", score, the_answer);
+    }
+
+    Ok(())
 }
 
 // -----------------------------
