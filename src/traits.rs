@@ -1,7 +1,7 @@
 use tantivy::collector::TopDocs;
 // use tantivy::doc;
 use tantivy::query::QueryParser;
-use tantivy::{schema::*, Index, ReloadPolicy};
+use tantivy::{schema::*, Index, ReloadPolicy, DocId, DocAddress};
 // use tempfile::TempDir;
 
 #[allow(unused)]
@@ -80,13 +80,15 @@ impl Search for TantivySearch {
             .iter()
             .enumerate()
             .map(|(i, (score, doc_address))| {
+                let docid = doc_address.doc_id;
                 let retrieved_doc = searcher.doc(*doc_address).unwrap();
                 let the_answer = self.schema.to_json(&retrieved_doc);
-                println!("TEST {}", the_answer);
+                println!("TEST {} {}", docid, the_answer);
                 (
                     i,
                     searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
                     // *score as f64,
+                    // docid as f64,
                 )
             })
             .collect();
