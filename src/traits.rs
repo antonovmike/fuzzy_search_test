@@ -70,10 +70,21 @@ impl Search for TantivySearch {
 
         let searcher = reader.searcher();
 // FIX DEFAULT FIELDS
-        let query_parser = QueryParser::for_index(&self.index, vec![ ]);
+        let query_parser = QueryParser::for_index(&self.index, vec![  ]);
         let query = query_parser.parse_query(input).unwrap();
 
         let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
+
+        let mut tupvek: Vec<(usize, f64)> = top_docs
+            .iter()
+            .enumerate()
+            .map(|(i, (_u, s))| {
+                (
+                    i,
+                    searcher.search(&query, &TopDocs::with_limit(10)).unwrap()[0].0 as f64,
+                )
+            })
+            .collect();
 
         for (score, doc_address) in top_docs {
             let retrieved_doc = searcher.doc(doc_address).unwrap();
@@ -81,7 +92,9 @@ impl Search for TantivySearch {
             println!("{} {}", score, the_answer);
         }
 
-        vec![]
+        tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
+
+        tupvek.into_iter().map(|(i, _d)| i).collect()
     }
 }
 

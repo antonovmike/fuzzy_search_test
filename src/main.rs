@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 
 mod traits;
-use traits::{RustFuzzySearch, Search, SimSearchEngine, StrSearchEngine};
+use traits::{RustFuzzySearch, Search, SimSearchEngine, StrSearchEngine, TantivySearch};
 
 fn main() {
     let catalog = load();
@@ -12,6 +12,7 @@ fn main() {
         Box::new(SimSearchEngine::new()),
         Box::new(StrSearchEngine::new()),
         Box::new(RustFuzzySearch::new()),
+        Box::new(TantivySearch::new()),
     ];
 
     for engine in &mut engines {
