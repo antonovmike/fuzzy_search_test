@@ -1,8 +1,8 @@
 use tantivy::collector::TopDocs;
-// use tantivy::doc;
+use tantivy::{doc, Document};
 use tantivy::query::QueryParser;
-use tantivy::{schema::*, Index, ReloadPolicy, DocId, DocAddress};
-// use tempfile::TempDir;
+use tantivy::{Index, ReloadPolicy, DocId, DocAddress};
+use std::collections::HashMap;
 
 #[allow(unused)]
 use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
@@ -12,6 +12,7 @@ use strsim::{
     damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
     normalized_levenshtein, osa_distance,
 };
+use tantivy::schema::{Schema, STORED, TEXT, Value};
 
 pub trait Search {
     fn name(&self) -> String;
@@ -22,22 +23,23 @@ pub trait Search {
 // -----------------------------
 
 pub struct TantivySearch {
-    schema: Schema,
+    // schema: Schema,
     index: Index,
 }
 
 impl TantivySearch {
     pub fn new() -> Self {
         let mut schema_builder = Schema::builder();
-        schema_builder.add_text_field("body", TEXT | STORED);
+        schema_builder.add_text_field("body", TEXT);
+        schema_builder.add_text_field("id", TEXT | STORED);
 
         let schema = schema_builder.build();
 
         let path = "./tantivy";
 
-        let index = Index::create_in_dir(&path, schema.clone()).unwrap();
+        let index = Index::create_in_dir(&path, schema).unwrap();
 
-        TantivySearch { schema, index }
+        TantivySearch { index }
     }
 }
 
@@ -48,11 +50,15 @@ impl Search for TantivySearch {
 
     fn load(&mut self, catalog: Vec<(usize, String)>) {
         let mut writer = self.index.writer(3_000_000).unwrap();
-        let body = self.schema.get_field("body").unwrap();
 
-        for (_index, text) in catalog {
+        let body = self.index.schema().get_field("body").unwrap();
+        let id = self.index.schema().get_field("id").unwrap();
+
+
+        for (index, text) in catalog {
             let mut rec = Document::default();
             rec.add_text(body, text);
+            rec.add_u64(id, index as u64);
 
             writer.add_document(rec).unwrap();
         }
@@ -70,34 +76,32 @@ impl Search for TantivySearch {
 
         let searcher = reader.searcher();
 
-        let field_name = self.index.schema().get_field("body").unwrap();
-        let query_parser = QueryParser::for_index(&self.index, vec![ field_name ]);
-        let query = query_parser.parse_query(input).unwrap();
+        let id = self.index.schema().get_field("id").unwrap();
+        let body = self.index.schema().get_field("body").unwrap();
+
+        let parser = QueryParser::for_index(&self.index, vec![ body ]);
+        let query = parser.parse_query(input).unwrap();
 
         let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
 
-        let mut tupvek: Vec<(usize, f64)> = top_docs
-            .iter()
-            .enumerate()
-            .map(|(i, (score, doc_address))| {
-                let docid = doc_address.doc_id;
-                let retrieved_doc = searcher.doc(*doc_address).unwrap();
-                let the_answer = self.schema.to_json(&retrieved_doc);
-                println!("TEST {} {}", docid, the_answer);
-                (
-                    i,
-                    searcher.search(&query, &TopDocs::with_limit(11)).unwrap()[i].0 as f64,
-                    // *score as f64,
-                    // docid as f64,
-                )
+        top_docs
+            .into_iter()
+            .map(|(score, doc_address)| {
+                let retrieved_doc = searcher.doc(doc_address).unwrap();
+
+                let index = if let Some(v) = retrieved_doc.get_first(id) {
+                    match v {
+                        Value::U64(n) => (*n) as usize,
+                        _ => usize::MAX
+                    }
+                } else {
+                    usize::MAX
+                };
+
+                index
             })
-            .collect();
-
-        tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
-        
-        println!("{:?}", tupvek.clone());
-
-        tupvek.into_iter().map(|(i, _d)| i).collect()
+            .filter(|i| *i != usize::MAX)
+            .collect()
     }
 }
 
