@@ -1,23 +1,51 @@
+#[allow(unused)]
 #[macro_use]
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
-use tantivy::schema::*;
-use tantivy::Index;
-use tantivy::ReloadPolicy;
+// use tantivy::schema::*;
+// use tantivy::Index;
+use tantivy::{schema::*, Index, ReloadPolicy};
 use tempfile::TempDir;
 
+#[allow(unused)]
 use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
 use simsearch::{SearchOptions, SimSearch};
+#[allow(unused)]
 use strsim::{
     damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
     normalized_levenshtein, osa_distance,
 };
 
-
 pub trait Search {
     fn name(&self) -> String;
     fn load(&mut self, catalog: Vec<(usize, String)>);
     fn search(&self, input: &str) -> Vec<usize>;
+}
+
+// -----------------------------
+
+pub struct TantivySearch {
+    catalog: Vec<(usize, String)>,
+}
+
+impl TantivySearch {
+    pub fn new() -> Self {
+        unimplemented!()
+    }
+}
+
+impl Search for TantivySearch {
+    fn name(&self) -> String {
+        return "TantivySearch".into();
+    }
+
+    fn load(&mut self, mut catalog: Vec<(usize, String)>) {
+        unimplemented!()
+    }
+
+    fn search(&self, input: &str) -> Vec<usize> {
+        unimplemented!()
+    }
 }
 
 // -----------------------------
