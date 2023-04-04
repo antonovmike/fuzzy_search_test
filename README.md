@@ -27,6 +27,8 @@ da.partial_cmp(db) // для usize
 3. Tentivy
 https://lib.rs/crates/tantivy
 
+https://tantivy-search.github.io/examples/basic_search.html
+
 score_with, case_sensitive, case_insensitive, best match
 
 4. Sublime Fuzzy

@@ -1,10 +1,7 @@
 use tantivy::collector::TopDocs;
-// use tantivy::{doc, Document};
 use tantivy::Document;
 use tantivy::query::QueryParser;
-// use tantivy::{Index, ReloadPolicy, DocId, DocAddress};
 use tantivy::{Index, ReloadPolicy};
-// use std::collections::HashMap;
 
 #[allow(unused)]
 use rust_fuzzy_search::{fuzzy_compare, fuzzy_search, fuzzy_search_sorted, fuzzy_search_threshold};
