@@ -1,4 +1,4 @@
-use std::fs::{File, self};
+use std::fs::{self, File};
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 use std::path::Path;
@@ -48,7 +48,7 @@ fn main() {
             let results = engine.search(&input);
             let total = results.len();
             if total == 0 {
-                println!("Нет овпадений");
+                println!("Нет совпадений");
                 continue;
             }
             results

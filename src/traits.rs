@@ -146,6 +146,7 @@ impl Search for RustFuzzySearch {
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
+// METRICS
         tupvek
             .iter()
             .take(10)
@@ -219,6 +220,7 @@ impl Search for StrSearchEngine {
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
+// METRICS
         tupvek
             .iter()
             .take(10)
