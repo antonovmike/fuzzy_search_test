@@ -4,6 +4,8 @@ Fuzzy search test
 
 A real case is used as an example. The names of all goods have been replaced.
 
+Search words and phrases can be taken from the file goods.txt
+
 1. SimSearch
 https://lib.rs/crates/simsearch
 
