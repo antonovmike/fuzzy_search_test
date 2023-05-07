@@ -1,4 +1,4 @@
-# posfz
+# fuzzy_search_test
 
 Fuzzy search test
 
