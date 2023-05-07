@@ -1,6 +1,6 @@
 use tantivy::collector::TopDocs;
-use tantivy::Document;
 use tantivy::query::QueryParser;
+use tantivy::Document;
 use tantivy::{Index, ReloadPolicy};
 
 #[allow(unused)]
@@ -11,7 +11,7 @@ use strsim::{
     damerau_levenshtein, jaro, jaro_winkler, normalized_damerau_levenshtein,
     normalized_levenshtein, osa_distance,
 };
-use tantivy::schema::{Schema, STORED, TEXT, Value};
+use tantivy::schema::{Schema, Value, STORED, TEXT};
 
 pub trait Search {
     fn name(&self) -> String;
@@ -22,7 +22,6 @@ pub trait Search {
 // -----------------------------
 
 pub struct TantivySearch {
-    // schema: Schema,
     index: Index,
 }
 
@@ -33,10 +32,7 @@ impl TantivySearch {
         schema_builder.add_text_field("id", TEXT | STORED);
 
         let schema = schema_builder.build();
-
-        let path = "./tantivy";
-
-        let index = Index::create_in_dir(&path, schema).unwrap();
+        let index = Index::create_in_ram(schema);
 
         TantivySearch { index }
     }
@@ -52,7 +48,6 @@ impl Search for TantivySearch {
 
         let body = self.index.schema().get_field("body").unwrap();
         let id = self.index.schema().get_field("id").unwrap();
-
 
         for (index, text) in catalog {
             let mut rec = Document::default();
@@ -78,7 +73,7 @@ impl Search for TantivySearch {
         let id = self.index.schema().get_field("id").unwrap();
         let body = self.index.schema().get_field("body").unwrap();
 
-        let parser = QueryParser::for_index(&self.index, vec![ body ]);
+        let parser = QueryParser::for_index(&self.index, vec![body]);
         let query = parser.parse_query(input).unwrap();
 
         let top_docs = searcher.search(&query, &TopDocs::with_limit(10)).unwrap();
@@ -86,8 +81,7 @@ impl Search for TantivySearch {
         top_docs
             .into_iter()
             .map(|(score, doc_address)| {
-
-// METRICS
+                // METRICS
                 println!("{score}");
 
                 let retrieved_doc = searcher.doc(doc_address).unwrap();
@@ -95,7 +89,7 @@ impl Search for TantivySearch {
                 let index = if let Some(v) = retrieved_doc.get_first(id) {
                     match v {
                         Value::U64(n) => (*n) as usize,
-                        _ => usize::MAX
+                        _ => usize::MAX,
                     }
                 } else {
                     usize::MAX
@@ -146,11 +140,8 @@ impl Search for RustFuzzySearch {
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
-// METRICS
-        tupvek
-            .iter()
-            .take(10)
-            .for_each(|(_u, f)| println!("{f}"));
+        // METRICS
+        tupvek.iter().take(10).for_each(|(_u, f)| println!("{f}"));
 
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
@@ -220,12 +211,9 @@ impl Search for StrSearchEngine {
 
         tupvek.sort_by(|(_ia, da), (_ib, db)| db.partial_cmp(da).unwrap());
 
-// METRICS
-        tupvek
-            .iter()
-            .take(10)
-            .for_each(|(_u, f)| println!("{f}"));
-        
+        // METRICS
+        tupvek.iter().take(10).for_each(|(_u, f)| println!("{f}"));
+
         tupvek.into_iter().map(|(i, _d)| i).collect()
     }
 }

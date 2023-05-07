@@ -1,25 +1,11 @@
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
-use std::path::Path;
 
 mod traits;
 use traits::{RustFuzzySearch, Search, SimSearchEngine, StrSearchEngine, TantivySearch};
 
-fn remove_files_in_dir<P: AsRef<Path>>(path: P) -> std::io::Result<()> {
-    for entry in fs::read_dir(path)? {
-        let entry = entry?;
-        let path = entry.path();
-        if entry.file_type()?.is_file() {
-            fs::remove_file(path)?;
-        }
-    }
-    Ok(())
-}
-
 fn main() {
-    remove_files_in_dir("tantivy");
-
     let catalog = load();
 
     let mut engines: Vec<Box<dyn Search>> = vec![
@@ -34,7 +20,7 @@ fn main() {
     }
 
     loop {
-        print!("Текст для поиска: ");
+        print!("Enter search phrase: ");
         io::stdout().flush().unwrap();
 
         let mut input = String::new();
@@ -48,7 +34,7 @@ fn main() {
             let results = engine.search(&input);
             let total = results.len();
             if total == 0 {
-                println!("Нет совпадений");
+                println!("No matches");
                 continue;
             }
             results
@@ -56,13 +42,13 @@ fn main() {
                 .take(10)
                 .for_each(|i| println!("{i}, {:?}", catalog[i as usize].1));
 
-            println!("всего: {}", total);
+            println!("Total: {}", total);
         }
     }
 }
 
 fn load() -> Vec<(usize, String)> {
-    let text_file = "utf8_dbo.GOOD.Table.sql";
+    let text_file = "some_data";
     let file = File::open(text_file).unwrap();
 
     let mut search_id = 0;
@@ -96,10 +82,10 @@ mod tests {
         let mut engine = SimSearchEngine::new();
         engine.load(catalog.clone());
 
-        let input = "верблжй";
+        let input = "green";
         let results = engine.search(&input);
         let total = results.len();
-        assert_eq!(13, total)
+        assert_eq!(3, total)
     }
 
     #[test]
@@ -108,27 +94,15 @@ mod tests {
         let mut engine = SimSearchEngine::new();
         engine.load(catalog.clone());
 
-        let input = "эластичн";
+        let input = "vanilla";
         let results = engine.search(&input);
         let total = results.len();
-        assert_eq!(222, total)
-    }
-
-    #[test]
-    fn total_full_prase() {
-        let catalog = load();
-        let mut engine = SimSearchEngine::new();
-        engine.load(catalog.clone());
-
-        let input = "ПОЯС ИЗ ВЕРБЛЮЖЬЕЙ ШЕРСТИ ТОНУС Р. 48";
-        let results = engine.search(&input);
-        let total = results.len();
-        assert_eq!(464, total)
+        assert_eq!(2, total)
     }
 
     #[test]
     fn top_10_mistape_1() {
-        let input = "верблжй";
+        let input = "blueberry";
         let catalog = load();
         let mut engine = SimSearchEngine::new();
 
@@ -136,17 +110,14 @@ mod tests {
         engine.search(&input);
 
         let answervec: Vec<usize> = engine.search(&input).into_iter().take(10).collect();
-
-        let key: Vec<usize> = vec![
-            1943, 4347, 4348, 4363, 4364, 10482, 10483, 10484, 10485, 11237,
-        ];
+        let key: Vec<usize> = vec![30, 45, 52];
 
         assert_eq!(key, answervec)
     }
 
     #[test]
     fn top_10_mistape_2() {
-        let input = "эластичн";
+        let input = "jasmine";
         let catalog = load();
         let mut engine = SimSearchEngine::new();
 
@@ -154,8 +125,7 @@ mod tests {
         engine.search(&input);
 
         let answervec: Vec<usize> = engine.search(&input).into_iter().take(10).collect();
-
-        let key: Vec<usize> = vec![1738, 1919, 1921, 1922, 1923, 1924, 1925, 1944, 2236, 2237];
+        let key: Vec<usize> = vec![66, 97];
 
         assert_eq!(key, answervec)
     }
