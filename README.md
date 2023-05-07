@@ -1,17 +1,20 @@
 # posfz
 
+Fuzzy search test
 
-механизмы нечеткого поиска / fuzzy search
+A real case is used as an example. The names of all goods have been replaced.
+
+Search words and phrases can be taken from the file goods.txt
 
 1. SimSearch
 https://lib.rs/crates/simsearch
 
-По умолчанию точность поика simsearch 0,8. Для повышения точности надо установить значение 0.9.
+The default search accuracy of simsearch is 0.8. To increase the accuracy, you should set the value to 0.9.
 
 2. StrSim
 https://crates.io/crates/strsim
 
-При переключении с usize метрики на f64 метрику надо менять порядок сравнения:
+When switching from usize metric to f64 metric, you have to change the order of comparison:
 ```Rust
 db.partial_cmp(da) // для f64
 da.partial_cmp(db) // для usize
@@ -31,4 +34,3 @@ https://lib.rs/crates/sublime_fuzzy
 https://crates.io/crates/rust-fuzzy-search
 
 commandline interface https://lib.rs/crates/rustyline
-
