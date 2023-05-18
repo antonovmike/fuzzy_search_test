@@ -16,8 +16,8 @@ https://crates.io/crates/strsim
 
 When switching from usize metric to f64 metric, you have to change the order of comparison:
 ```Rust
-db.partial_cmp(da) // для f64
-da.partial_cmp(db) // для usize
+db.partial_cmp(da) // f64
+da.partial_cmp(db) // usize
 ````
 
 3. Tentivy
