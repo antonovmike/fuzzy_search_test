@@ -5,8 +5,14 @@ use std::io::{BufRead, BufReader};
 mod traits;
 use traits::{RustFuzzySearch, Search, SimSearchEngine, StrSearchEngine, TantivySearch};
 
+#[derive(Debug, thiserror::Error)]
+enum Error {
+    #[error("failed to open file: {0}")]
+    IoError(#[from] std::io::Error),
+}
+
 fn main() {
-    let catalog = load();
+    let catalog = load().unwrap();
 
     let mut engines: Vec<Box<dyn Search>> = vec![
         Box::new(SimSearchEngine::new()),
@@ -16,7 +22,7 @@ fn main() {
     ];
 
     for engine in &mut engines {
-        engine.load(catalog.clone())
+        engine.load(catalog.clone());
     }
 
     loop {
@@ -47,9 +53,9 @@ fn main() {
     }
 }
 
-fn load() -> Vec<(usize, String)> {
+fn load() -> Result<Vec<(usize, String)>, Error> {
     let text_file = "some_data";
-    let file = File::open(text_file).unwrap();
+    let file = File::open(text_file)?;
 
     let mut search_id = 0;
 
@@ -69,7 +75,7 @@ fn load() -> Vec<(usize, String)> {
             search_id += 1;
         });
 
-    catalog
+    Ok(catalog)
 }
 
 #[cfg(test)]
@@ -80,7 +86,7 @@ mod tests {
     fn total_mistape_1() {
         let catalog = load();
         let mut engine = SimSearchEngine::new();
-        engine.load(catalog.clone());
+        engine.load(catalog.unwrap().clone());
 
         let input = "green";
         let results = engine.search(&input);
@@ -92,7 +98,7 @@ mod tests {
     fn total_mistape_2() {
         let catalog = load();
         let mut engine = SimSearchEngine::new();
-        engine.load(catalog.clone());
+        engine.load(catalog.unwrap().clone());
 
         let input = "vanilla";
         let results = engine.search(&input);
@@ -106,7 +112,7 @@ mod tests {
         let catalog = load();
         let mut engine = SimSearchEngine::new();
 
-        engine.load(catalog.clone());
+        engine.load(catalog.unwrap().clone());
         engine.search(&input);
 
         let answervec: Vec<usize> = engine.search(&input).into_iter().take(10).collect();
@@ -121,7 +127,7 @@ mod tests {
         let catalog = load();
         let mut engine = SimSearchEngine::new();
 
-        engine.load(catalog.clone());
+        engine.load(catalog.unwrap().clone());
         engine.search(&input);
 
         let answervec: Vec<usize> = engine.search(&input).into_iter().take(10).collect();
